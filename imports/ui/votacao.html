@@ -1,7 +1,44 @@
 <template name="votacao">
-  <form class="votacao">
-      <input type="text" name="prefeitoUm" /> VS
-        <input type="text" id="prefeitoDois" />
-      <button type="submit">Incluir</button>
+  <form class="votacao form-inline">
+        <input type="hidden" id="_id" />
+        <input type="text" placeholder="Candidato 1" name="prefeitoUm" id="prefeitoUm" /> VS
+        <input type="text" placeholder="Candidato 2" id="prefeitoDois" />
+      <button type="submit" class="btn btn-primary">Incluir</button>
   </form>
+
+    <br />
+
+    <h2>Votações</h2>
+    {{#each votacoes}}
+
+    <div class="row">
+      <div class="col-md-4 col-md-offset-2">
+          <div class="thumbnail">
+              <div class="caption">
+                  <h3>{{prefeitoUm.nome}}  <span class="label label-info">{{prefeitoUm.qtdVotos}}</span> </h3>
+                  <p>Para votar neste candidato, clique abaixo!</p><br/>
+                  <p>
+                      <button class="btn btn-primary votarUm">Votar</button>
+                  </p>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-4">
+          <div class="thumbnail">
+              <div class="caption">
+                  <h3>{{prefeitoDois.nome}}  <span class="label label-info">{{prefeitoDois.qtdVotos}}</span> </h3>
+                  <p>Para votar neste candidato, clique abaixo!</p><br/>
+                  <p>
+                      <button class="btn btn-primary votarDois">Votar</button>
+                  </p>
+              </div>
+          </div>
+      </div>
+    </div>
+    <div class="row">
+       <button class="editar">Editar</button> <br/><br/>
+    </div>
+
+    {{/each}}
+
   </template>
