@@ -4,6 +4,10 @@ import {Votacao} from '../api/votacao.js';
 import './votacao.html';
 
 Template.votacao.events({
+  'click .remover'() {
+    Meteor.call('remover', this._id);
+  },
+
   'click .editar'() {
     const votacao = Votacao.findOne({ _id: this._id});
     $('#prefeitoUm').val(votacao.prefeitoUm.nome);
@@ -18,40 +22,17 @@ Template.votacao.events({
     const _id = $('#_id').val(); //JQUERY
 
     if(_id) {
-      Votacao.update( { _id : _id } , {
-        $set: {
-          'prefeitoUm.nome': prefeitoUm,
-          'prefeitoDois.nome': prefeitoDois
-        }
-      });
-
+      Meteor.call('atualizar', _id, prefeitoUm, prefeitoDois);
     } else {
-
-      Votacao.insert( {
-        prefeitoUm: {
-          nome: prefeitoUm,
-          qtdVotos: 0
-        },
-        prefeitoDois: {
-          nome: prefeitoDois,
-          qtdVotos: 0
-        }
-      } );
+      Meteor.call('inserir', prefeitoUm, prefeitoDois);
     }
-
     limparCampos();
   },
   'click .votarUm'() {
-    const filtro = { _id: this._id };
-    Votacao.update( filtro , {
-      $set: { 'prefeitoUm.qtdVotos': this.prefeitoUm.qtdVotos + 1 }
-    });
+    Meteor.call('votarUm', this._id, this.prefeitoUm.qtdVotos);
   },
   'click .votarDois'() {
-    const filtro = { _id: this._id };
-    Votacao.update( filtro , {
-      $set: { 'prefeitoDois.qtdVotos': this.prefeitoDois.qtdVotos + 1 }
-    });
+    Meteor.call('votarDois', this._id, this.prefeitoDois.qtdVotos);
   }
 });
 
@@ -59,33 +40,11 @@ function limparCampos() {
   $('.votacao').trigger("reset");
 }
 
-// function atualizarVotos(votacao, prefeito, qdtVotos) {
-//   const filtro = { _id: votacao._id };
-//   Votacao.update( filtro , {
-//     $set: { 'prefeitoDois.qtdVotos': votacao.prefeitoDois.qtdVotos + 1 }
-//   });
-// }
-
 Template.votacao.helpers({
-  // teste() {
-  //   return "Teste 2";
-  // },
-  // nomes() {
-  //   return ["Nome 1", "Nome 2", "Nome 3"]
-  // },
-  // pessoas() {
-  //   return [
-  //     {
-  //       nome: "Maria",
-  //       idade: 40
-  //     },
-  //     {
-  //       nome: "João",
-  //       idade: 45
-  //     }
-  //   ]
-  // },
   votacoes(){
     return Votacao.find();
+  },
+  isLogado() {
+    return Meteor.userId();
   }
 });

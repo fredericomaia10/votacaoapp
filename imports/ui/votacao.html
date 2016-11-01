@@ -1,16 +1,29 @@
 <template name="votacao">
-  <form class="votacao form-inline">
-        <input type="hidden" id="_id" />
-        <input type="text" placeholder="Candidato 1" name="prefeitoUm" id="prefeitoUm" /> VS
-        <input type="text" placeholder="Candidato 2" id="prefeitoDois" />
-      <button type="submit" class="btn btn-primary">Incluir</button>
-  </form>
 
-    <br />
+    {{#if isLogado}}
+        <div class="row">
+            <div class="col-lg-12 text-center well">
+                <h2>Nova votação</h2>
+                <br/>
+                <form class="votacao form-inline">
+                    <input type="hidden" id="_id" />
+                    <input type="text" placeholder="Candidato 1" name="prefeitoUm" id="prefeitoUm" /> VS
+                    <input type="text" placeholder="Candidato 2" id="prefeitoDois" />
+                    <button type="submit" class="btn btn-primary">Incluir</button>
+                </form>
+                <br/>
+                <br/>
+            </div>
+        </div>
+    {{/if}}
 
-    <h2>Votações</h2>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h2>Votações </h2>
+        </div>
+    </div>
+
     {{#each votacoes}}
-
     <div class="row">
       <div class="col-md-4 col-md-offset-2">
           <div class="thumbnail">
@@ -36,9 +49,12 @@
       </div>
     </div>
     <div class="row">
-       <button class="editar">Editar</button> <br/><br/>
+        <div class="col-md-4 col-md-offset-2">
+            <button class="editar btn btn-xs btn-default">Editar</button>
+            <button class="remover btn btn-xs btn-danger">Remover</button>
+        </div>
     </div>
-
+    <br/>
     {{/each}}
 
   </template>
