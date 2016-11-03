@@ -3,9 +3,17 @@ import {Votacao} from '../api/votacao.js';
 
 import './votacao.html';
 
+Template.votacao.onCreated(function() {
+  this.instance = new ReactiveDict();
+  Meteor.subscribe('votacoesAtivas');
+});
+
 Template.votacao.events({
   'click .js-remover'(){
-    remover(this._id);
+    Meteor.call('removerVotacao', this._id);
+  },
+  'click .js-desativar'(){
+    Meteor.call('desativarVotacao', this._id);
   },
   'click .js-editar'() {
     const votacao = Votacao.findOne({ _id: this._id});
@@ -53,14 +61,9 @@ function limparCampos() {
 
 Template.votacao.helpers({
   votacoes(){
-    return Votacao.find();
+    return Votacao.find({ ativado: true });
   },
   isLogado() {
     return Meteor.userId();
   }
 });
-
-
-function remover(id) {
-  Votacao.remove( { _id: id });
-}

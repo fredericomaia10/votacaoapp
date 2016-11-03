@@ -15,8 +15,9 @@ Meteor.methods({
       prefeitoDois: {
         nome: prefeitoDois,
         qtdVotos: 0
-      }
-    } );
+      },
+      ativado: true
+    });
   },
 
   atualizarVotacao(_id, prefeitoUm, prefeitoDois) {
@@ -26,5 +27,17 @@ Meteor.methods({
         'prefeitoDois.nome': prefeitoDois
       }
     });
-  }
+  },
+
+  removerVotacao(_id) {
+    Votacao.remove( { _id: _id });
+  },
+
+  desativarVotacao(_id) {
+    Votacao.update( { _id : _id } , {
+      $set: {
+        ativado: false
+      }
+    });
+  },
 });
