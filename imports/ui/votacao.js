@@ -4,7 +4,10 @@ import {Votacao} from '../api/votacao.js';
 import './votacao.html';
 
 Template.votacao.events({
-  'click .editar'() {
+  'click .js-remover'(){
+    remover(this._id);
+  },
+  'click .js-editar'() {
     const votacao = Votacao.findOne({ _id: this._id});
     $('#prefeitoUm').val(votacao.prefeitoUm.nome);
     $('#prefeitoDois').val(votacao.prefeitoDois.nome);
@@ -18,27 +21,16 @@ Template.votacao.events({
     const _id = $('#_id').val(); //JQUERY
 
     if(_id) {
-      Votacao.update( { _id : _id } , {
-        $set: {
-          'prefeitoUm.nome': prefeitoUm,
-          'prefeitoDois.nome': prefeitoDois
+      Meteor.call('atualizarVotacao', _id, prefeitoUm, prefeitoDois);
+    } else {
+      Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function(error, response) {
+        if(error) {
+          $('.error').toggleClass('hide');
+        } else {
+          alert('Sucesso!');
         }
       });
-
-    } else {
-
-      Votacao.insert( {
-        prefeitoUm: {
-          nome: prefeitoUm,
-          qtdVotos: 0
-        },
-        prefeitoDois: {
-          nome: prefeitoDois,
-          qtdVotos: 0
-        }
-      } );
     }
-
     limparCampos();
   },
   'click .votarUm'() {
@@ -59,33 +51,16 @@ function limparCampos() {
   $('.votacao').trigger("reset");
 }
 
-// function atualizarVotos(votacao, prefeito, qdtVotos) {
-//   const filtro = { _id: votacao._id };
-//   Votacao.update( filtro , {
-//     $set: { 'prefeitoDois.qtdVotos': votacao.prefeitoDois.qtdVotos + 1 }
-//   });
-// }
-
 Template.votacao.helpers({
-  // teste() {
-  //   return "Teste 2";
-  // },
-  // nomes() {
-  //   return ["Nome 1", "Nome 2", "Nome 3"]
-  // },
-  // pessoas() {
-  //   return [
-  //     {
-  //       nome: "Maria",
-  //       idade: 40
-  //     },
-  //     {
-  //       nome: "João",
-  //       idade: 45
-  //     }
-  //   ]
-  // },
   votacoes(){
     return Votacao.find();
+  },
+  isLogado() {
+    return Meteor.userId();
   }
 });
+
+
+function remover(id) {
+  Votacao.remove( { _id: id });
+}

@@ -30,7 +30,15 @@
         <div class="jumbotron">
             <h1>Votação em Real Time!</h1>
             <p>Vote no seu candidato favorito!</p>
-            <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Votar agora</a></p> -->
+
+            <!-- INSTALAR PACKAGES -->
+            <!--meteor add accounts-password accounts-ui-->
+
+            <!-- ADICIONAR NO MAIN.HTML -->
+            {{>loginButtons}}
+
+
+
         </div>
 
       {{> votacao}}
