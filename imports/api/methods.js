@@ -3,7 +3,7 @@ import {Votacao} from './votacao.js';
 import {check} from 'meteor/check';
 
 Meteor.methods({
-  inserirVotacao(prefeitoUm, prefeitoDois) {
+  'inserirVotacao'(prefeitoUm, prefeitoDois) {
     check(prefeitoUm, String);
     check(prefeitoDois, String);
 
@@ -15,8 +15,9 @@ Meteor.methods({
       prefeitoDois: {
         nome: prefeitoDois,
         qtdVotos: 0
-      }
-    } );
+      },
+      userId: Meteor.userId()
+    });
   },
 
   atualizarVotacao(_id, prefeitoUm, prefeitoDois) {
@@ -26,5 +27,9 @@ Meteor.methods({
         'prefeitoDois.nome': prefeitoDois
       }
     });
+  },
+
+  removerVotacao(_id) {
+    Votacao.remove( { _id: _id });
   }
 });

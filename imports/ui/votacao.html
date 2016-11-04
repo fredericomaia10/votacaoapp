@@ -1,28 +1,34 @@
 <template name="votacao">
 
-    {{#if isLogado}}
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="text-center">
-                    <h2>Nova votação</h2>
-                    <div class="error alert alert-danger hide" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        Ocorreu um erro no servidor.
+    {{#if mostrarForm}}
+        {{#if isLogado}}
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="text-center">
+                        <h2>Nova votação</h2>
+                        <div class="error alert alert-danger hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            Ocorreu um erro no servidor.
+                        </div>
+                        <form class="votacao form-inline">
+                            <input type="hidden" id="_id" />
+                            <input type="text" placeholder="Candidato 1" name="prefeitoUm" id="prefeitoUm" /> VS
+                            <input type="text" placeholder="Candidato 2" id="prefeitoDois" />
+                            <button type="submit" class="btn btn-primary">Incluir</button>
+                            <button class="js-cancelar-show-form btn btn-default">Cancelar</button>
+                        </form>
                     </div>
-                    <form class="votacao form-inline">
-                        <input type="hidden" id="_id" />
-                        <input type="text" placeholder="Candidato 1" name="prefeitoUm" id="prefeitoUm" /> VS
-                        <input type="text" placeholder="Candidato 2" id="prefeitoDois" />
-                        <button type="submit" class="btn btn-primary">Incluir</button>
-                    </form>
                 </div>
             </div>
-        </div>
+        {{/if}}
     {{/if}}
 
     <br />
 
-    <h2 class="text-center">Votações</h2>
+    <h2 class="text-center">Votações <small>
+        <button class="js-show-form btn btn-primary
+         btn-xs">Adicionar novo</button>
+    </small>  </h2>
     {{#each votacoes}}
     <div class="row">
       <div class="col-md-4 col-md-offset-2">

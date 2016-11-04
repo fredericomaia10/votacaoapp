@@ -1,11 +1,35 @@
 import { Template } from 'meteor/templating';
 import {Votacao} from '../api/votacao.js';
+import {Tracker} from 'meteor/tracker';
 
 import './votacao.html';
 
+//ADCIONAR PACKAGE REACTIVE-DICT
+//INSTANCIAR O REACTIVE-DICT NO ON CREATEAD DO TEMPLATE
+//SETAR PARA FALSE PARA ESCONDER O FORM NA PRIMEIRA VEZ
+//CRIAR UM BOTAO NA TELA DE ADICIONAR NOVO, COM UM EVENTO PARA SETAR O REACTIVE-DICT DO SHOWFORM PARA TRUE
+//AO FINAL DO INCLUIR, SETAR O REACTIVE-DICT DO SHOWFORM PARA FALSE
+//CRIAR O HERLPER E O IF NO HTML PARA ESCONDER SE ESTIVER TRUE
+
+Template.votacao.onCreated(function() {
+  this.estadoDaTela = new ReactiveDict();
+  this.estadoDaTela.set('showForm', false);
+
+  Tracker.autorun(() => {
+    Meteor.subscribe('votacoesPorUsuario', Meteor.userId());
+  });
+});
+
 Template.votacao.events({
+  'click .js-show-form'(event, instance){
+    instance.estadoDaTela.set('showForm', true);
+  },
+  'click .js-cancelar-show-form'(event, instance){
+    event.preventDefault();
+    instance.estadoDaTela.set('showForm', false);
+  },
   'click .js-remover'(){
-    remover(this._id);
+    Meteor.call('removerVotacao', this._id);
   },
   'click .js-editar'() {
     const votacao = Votacao.findOne({ _id: this._id});
@@ -14,7 +38,7 @@ Template.votacao.events({
     $('#_id').val(votacao._id);
   },
 
-  'submit .votacao'(event) {
+  'submit .votacao'(event, instance) {
     event.preventDefault();
     const prefeitoUm = $('#prefeitoUm').val(); //JQUERY
     const prefeitoDois = $('#prefeitoDois').val(); //JQUERY
@@ -27,6 +51,7 @@ Template.votacao.events({
         if(error) {
           $('.error').toggleClass('hide');
         } else {
+          instance.estadoDaTela.set('showForm', false);
           alert('Sucesso!');
         }
       });
@@ -57,10 +82,8 @@ Template.votacao.helpers({
   },
   isLogado() {
     return Meteor.userId();
+  },
+  mostrarForm() {
+    return Template.instance().estadoDaTela.get('showForm');
   }
 });
-
-
-function remover(id) {
-  Votacao.remove( { _id: id });
-}
