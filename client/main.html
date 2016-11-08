@@ -1,9 +1,9 @@
 <head>
-  <title>VoteApp - Meteor</title>
+    <title>VoteApp - Meteor</title>
 </head>
 
 <body>
-  <header>
+<header>
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -19,29 +19,38 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="http://f7academy.com.br" target="_blank">F7 Academy</a></li>
+                    <li>
+                        <a href="http://f7academy.com.br" target="_blank">
+                            <span class="glyphicon glyphicon-link"></span> F7 Academy
+                        </a>
+                    </li>
+                    {{#if isLogado}}
+                    <li>
+                        <a href="#" class="logout" target="_blank">
+                            <span class="glyphicon glyphicon-log-out"></span> Sair
+                        </a>
+                    </li>
+                    {{/if}}
                 </ul>
             </div>
         </div>
     </nav>
-  </header>
+</header>
 
-  <div class="container">
-        <div class="jumbotron">
-            <h1>Votação em Real Time!</h1>
-            <p>Vote no seu candidato favorito!</p>
-
-            <!-- INSTALAR PACKAGES -->
-            <!--meteor add accounts-password accounts-ui-->
-
-            <!-- ADICIONAR NO MAIN.HTML -->
-            {{>loginButtons}}
-
-
-
+<div class="container">
+    <div class="jumbotron">
+        <h1>Votação em Real Time!</h1>
+        <p>Vote no seu candidato favorito!</p>
+    </div>
+    {{#if isLogado}}
+        {{> votacao}}
+    {{else}}
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+                {{>atForm}}
+            </div>
         </div>
-
-      {{> votacao}}
-  </div>
+    {{/if}}
+</div>
 
 </body>

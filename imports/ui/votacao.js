@@ -80,9 +80,6 @@ Template.votacao.helpers({
   votacoes(){
     return Votacao.find();
   },
-  isLogado() {
-    return Meteor.userId();
-  },
   mostrarForm() {
     return Template.instance().estadoDaTela.get('showForm');
   }
