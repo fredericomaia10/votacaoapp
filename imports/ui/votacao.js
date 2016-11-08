@@ -115,7 +115,7 @@ function mostrarMensagemSucesso(instance, msg) {
 }
 
 function inserirVotacao(prefeitoUm, prefeitoDois, instance) {
-  Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function (err, response) {
+  Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function (err) {
     if (err) {
       tratarErroForm(err, instance);
     } else {
