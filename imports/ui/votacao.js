@@ -7,7 +7,7 @@ import './votacao.html';
 
 Template.votacao.onCreated(function() {
   this.estadoDaTela = new ReactiveDict();
-  this.estadoDaTela.set('showForm', false);
+  this.estadoDaTela.set('formVisivel', false);
   this.estadoDaTela.set('mensagemErro', null);
   this.estadoDaTela.set('mensagemSucesso', null);
 
@@ -17,59 +17,64 @@ Template.votacao.onCreated(function() {
 });
 
 Template.votacao.events({
-  'click .js-show-form'(event, instance){
-    instance.estadoDaTela.set('showForm', true);
+
+  'click .js-show-form'(e, instance){
+    mostrarForm(instance);
   },
-  'click .js-cancelar-show-form'(event, instance){
-    event.preventDefault();
-    instance.estadoDaTela.set('showForm', false);
+
+  'click .js-cancelar-show-form'(e, instance){
+    esconderForm(instance);
     limparCampos(instance);
   },
+
   'click .js-remover'(){
-    Meteor.call('removerVotacao', this._id);
+    removerVotacao(this._id);
   },
+
   'click .js-editar'() {
-    const votacao = Votacao.findOne({ _id: this._id});
-    $('#prefeitoUm').val(votacao.prefeitoUm.nome);
-    $('#prefeitoDois').val(votacao.prefeitoDois.nome);
-    $('#_id').val(votacao._id);
+    editarVotacao(this._id);
   },
 
-  'submit .votacao'(event, instance) {
-    event.preventDefault();
-    const prefeitoUm = $('#prefeitoUm').val(); //JQUERY
-    const prefeitoDois = $('#prefeitoDois').val(); //JQUERY
-    const _id = $('#_id').val(); //JQUERY
-
+  'submit .votacao'(e, instance) {
+    e.preventDefault();
+    const prefeitoUm = $('#prefeitoUm').val();
+    const prefeitoDois = $('#prefeitoDois').val();
+    const _id = $('#_id').val();
     if(_id) {
-      Meteor.call('atualizarVotacao', _id, prefeitoUm, prefeitoDois);
+      atualizarVotacao(_id, prefeitoUm, prefeitoDois);
     } else {
-      Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function(err, response) {
-        if(err) {
-          if (err.error == 'validation-error') {
-            instance.estadoDaTela.set('mensagemErro', err.reason);
-          }
-
-        } else {
-          instance.estadoDaTela.set('showForm', false);
-          instance.estadoDaTela.set('mensagemSucesso', 'Inserido com sucesso!');
-          limparCampos(instance);
-        }
-      });
+      inserirVotacao(prefeitoUm, prefeitoDois, instance);
     }
   },
+
   'click .votarUm'() {
-    const filtro = { _id: this._id };
-    Votacao.update( filtro , {
-      $set: { 'prefeitoUm.qtdVotos': this.prefeitoUm.qtdVotos + 1 }
-    });
+    votarCandidatoUm(this._id);
   },
+
   'click .votarDois'() {
-    const filtro = { _id: this._id };
-    Votacao.update( filtro , {
-      $set: { 'prefeitoDois.qtdVotos': this.prefeitoDois.qtdVotos + 1 }
-    });
+    votarCandidatoDois(this._id);
   }
+
+});
+
+Template.votacao.helpers({
+
+  votacoes(){
+    return Votacao.find();
+  },
+
+  mostrarForm() {
+    return Template.instance().estadoDaTela.get('formVisivel');
+  },
+
+  mensagemErro() {
+    return Template.instance().estadoDaTela.get('mensagemErro');
+  },
+
+  mensagemSucesso() {
+    return Template.instance().estadoDaTela.get('mensagemSucesso');
+  }
+
 });
 
 function limparCampos(instance) {
@@ -77,17 +82,65 @@ function limparCampos(instance) {
   $('.votacao').trigger("reset");
 }
 
-Template.votacao.helpers({
-  votacoes(){
-    return Votacao.find();
-  },
-  mostrarForm() {
-    return Template.instance().estadoDaTela.get('showForm');
-  },
-  mensagemErro() {
-    return Template.instance().estadoDaTela.get('mensagemErro');
-  },
-  mensagemSucesso() {
-    return Template.instance().estadoDaTela.get('mensagemSucesso');
+function mostrarForm(instance) {
+  instance.estadoDaTela.set('formVisivel', true);
+}
+
+function esconderForm(instance) {
+  instance.estadoDaTela.set('formVisivel', false);
+}
+
+function editarVotacao(_id) {
+  const votacao = Votacao.findOne({_id: _id});
+  $('#prefeitoUm').val(votacao.prefeitoUm.nome);
+  $('#prefeitoDois').val(votacao.prefeitoDois.nome);
+  $('#_id').val(votacao._id);
+}
+
+function mostrarMensagemErro(instance, msg) {
+  instance.estadoDaTela.set('mensagemErro', msg);
+}
+
+function tratarErroForm(err, instance) {
+  if (err.error == 'validation-error') {
+    mostrarMensagemErro(instance, err.reason);
   }
-});
+}
+
+function mostrarMensagemSucesso(instance, msg) {
+  instance.estadoDaTela.set('mensagemSucesso', msg);
+}
+
+function inserirVotacao(prefeitoUm, prefeitoDois, instance) {
+  Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function (err, response) {
+    if (err) {
+      tratarErroForm(err, instance);
+    } else {
+      esconderForm(instance);
+      mostrarMensagemSucesso(instance, 'Inserido com sucesso!');
+      limparCampos(instance);
+    }
+  });
+}
+
+function atualizarVotacao(_id, prefeitoUm, prefeitoDois) {
+  Meteor.call('atualizarVotacao', _id, prefeitoUm, prefeitoDois);
+}
+
+function votarCandidatoUm(_id) {
+  const filtro = {_id: _id};
+  Votacao.update(filtro, {
+    $set: {'prefeitoUm.qtdVotos': this.prefeitoUm.qtdVotos + 1}
+  });
+}
+
+function votarCandidatoDois(_id) {
+  const filtro = {_id: _id};
+  Votacao.update(filtro, {
+    $set: {'prefeitoDois.qtdVotos': this.prefeitoDois.qtdVotos + 1}
+  });
+}
+
+function removerVotacao(_id) {
+  Meteor.call('removerVotacao', _id);
+}
