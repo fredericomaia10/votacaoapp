@@ -104,6 +104,8 @@ function mostrarMensagemErro(instance, msg) {
 function tratarErroForm(err, instance) {
   if (err.error == 'validation-error') {
     mostrarMensagemErro(instance, err.reason);
+  } else {
+    mostrarMensagemErro(instance, 'Ocorreu um erro inesperado.');
   }
 }
 
