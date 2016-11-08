@@ -2,18 +2,14 @@ import { Template } from 'meteor/templating';
 import {Votacao} from '../api/votacao.js';
 import {Tracker} from 'meteor/tracker';
 
+import './mensagens.html';
 import './votacao.html';
-
-//ADCIONAR PACKAGE REACTIVE-DICT
-//INSTANCIAR O REACTIVE-DICT NO ON CREATEAD DO TEMPLATE
-//SETAR PARA FALSE PARA ESCONDER O FORM NA PRIMEIRA VEZ
-//CRIAR UM BOTAO NA TELA DE ADICIONAR NOVO, COM UM EVENTO PARA SETAR O REACTIVE-DICT DO SHOWFORM PARA TRUE
-//AO FINAL DO INCLUIR, SETAR O REACTIVE-DICT DO SHOWFORM PARA FALSE
-//CRIAR O HERLPER E O IF NO HTML PARA ESCONDER SE ESTIVER TRUE
 
 Template.votacao.onCreated(function() {
   this.estadoDaTela = new ReactiveDict();
   this.estadoDaTela.set('showForm', false);
+  this.estadoDaTela.set('mensagemErro', null);
+  this.estadoDaTela.set('mensagemSucesso', null);
 
   Tracker.autorun(() => {
     Meteor.subscribe('votacoesPorUsuario', Meteor.userId());
@@ -27,6 +23,7 @@ Template.votacao.events({
   'click .js-cancelar-show-form'(event, instance){
     event.preventDefault();
     instance.estadoDaTela.set('showForm', false);
+    instance.estadoDaTela.set('mensagemErro', null);
   },
   'click .js-remover'(){
     Meteor.call('removerVotacao', this._id);
@@ -49,14 +46,16 @@ Template.votacao.events({
     } else {
       Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function(error, response) {
         if(error) {
-          $('.error').toggleClass('hide');
+          instance.estadoDaTela.set('mensagemErro', error.reason);
         } else {
           instance.estadoDaTela.set('showForm', false);
-          alert('Sucesso!');
+          instance.estadoDaTela.set('mensagemErro', null);
+          instance.estadoDaTela.set('mensagemSucesso', 'Criado com sucesso!');
+          limparCampos();
         }
       });
     }
-    limparCampos();
+
   },
   'click .votarUm'() {
     const filtro = { _id: this._id };
@@ -80,10 +79,17 @@ Template.votacao.helpers({
   votacoes(){
     return Votacao.find();
   },
-  isLogado() {
-    return Meteor.userId();
-  },
+  //Substituído pelo Helper Global
+  // isLogado() {
+  //   return Meteor.userId();
+  // },
   mostrarForm() {
     return Template.instance().estadoDaTela.get('showForm');
+  },
+  mensagemErro() {
+    return Template.instance().estadoDaTela.get('mensagemErro');
+  },
+  mensagemSucesso() {
+    return Template.instance().estadoDaTela.get('mensagemSucesso');
   }
 });

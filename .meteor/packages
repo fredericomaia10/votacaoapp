@@ -20,5 +20,7 @@ shell-server@0.2.1            # Server-side component of the `meteor shell` comm
 
 twbs:bootstrap
 accounts-password
-accounts-ui
 reactive-dict
+aldeed:simple-schema
+useraccounts:bootstrap
+softwarerero:accounts-t9n

@@ -7,17 +7,20 @@ Meteor.methods({
     check(prefeitoUm, String);
     check(prefeitoDois, String);
 
-    Votacao.insert( {
+    const votacao = {
       prefeitoUm: {
         nome: prefeitoUm,
-        qtdVotos: 0
       },
       prefeitoDois: {
         nome: prefeitoDois,
-        qtdVotos: 0
       },
-      userId: Meteor.userId()
-    });
+      userId: Meteor.userId(),
+      partido: "PDT"
+    };
+
+    Votacao.schema.clean(votacao);
+    Votacao.schema.validate(votacao);
+    Votacao.insert(votacao);
   },
 
   atualizarVotacao(_id, prefeitoUm, prefeitoDois) {

@@ -1,0 +1,20 @@
+<template name="mensagens">
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            {{#if msgErro}}
+                <div class="error alert alert-danger" role="alert">
+                    {{msgErro}}
+                </div>
+            {{/if}}
+
+            {{#if msgSucesso}}
+                <div class="error alert alert-success" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    {{msgSucesso}}
+                </div>
+            {{/if}}
+        </div>
+    </div>
+
+</template>
