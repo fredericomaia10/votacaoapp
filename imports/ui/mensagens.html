@@ -1,0 +1,15 @@
+<template name="mensagens">
+    {{#if mensagemErro}}
+        <div class="error alert alert-danger" role="alert">
+            {{mensagemErro}}
+        </div>
+    {{/if}}
+    {{#if mensagemSucesso}}
+        <div class="error alert alert-success" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{mensagemSucesso}}
+        </div>
+    {{/if}}
+</template>

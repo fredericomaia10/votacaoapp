@@ -1,14 +1,17 @@
 <template name="votacao">
 
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            {{>mensagens mensagemErro=mensagemErro mensagemSucesso=mensagemSucesso}}
+        </div>
+    </div>
+
     {{#if mostrarForm}}
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="text-center">
                     <h2>Nova votação</h2>
-                    <div class="error alert alert-danger hide" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        Ocorreu um erro no servidor.
-                    </div>
+
                     <form class="votacao form-inline">
                         <input type="hidden" id="_id" />
                         <input type="text" placeholder="Candidato 1" name="prefeitoUm" id="prefeitoUm" /> VS
@@ -19,9 +22,8 @@
                 </div>
             </div>
         </div>
+        <br />
     {{/if}}
-
-    <br />
 
     <h2 class="text-center">Votações <small>
         <button class="js-show-form btn btn-primary

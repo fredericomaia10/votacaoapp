@@ -2,18 +2,14 @@ import { Template } from 'meteor/templating';
 import {Votacao} from '../api/votacao.js';
 import {Tracker} from 'meteor/tracker';
 
+import './mensagens.html';
 import './votacao.html';
-
-//ADCIONAR PACKAGE REACTIVE-DICT
-//INSTANCIAR O REACTIVE-DICT NO ON CREATEAD DO TEMPLATE
-//SETAR PARA FALSE PARA ESCONDER O FORM NA PRIMEIRA VEZ
-//CRIAR UM BOTAO NA TELA DE ADICIONAR NOVO, COM UM EVENTO PARA SETAR O REACTIVE-DICT DO SHOWFORM PARA TRUE
-//AO FINAL DO INCLUIR, SETAR O REACTIVE-DICT DO SHOWFORM PARA FALSE
-//CRIAR O HERLPER E O IF NO HTML PARA ESCONDER SE ESTIVER TRUE
 
 Template.votacao.onCreated(function() {
   this.estadoDaTela = new ReactiveDict();
   this.estadoDaTela.set('showForm', false);
+  this.estadoDaTela.set('mensagemErro', null);
+  this.estadoDaTela.set('mensagemSucesso', null);
 
   Tracker.autorun(() => {
     Meteor.subscribe('votacoesPorUsuario', Meteor.userId());
@@ -27,6 +23,7 @@ Template.votacao.events({
   'click .js-cancelar-show-form'(event, instance){
     event.preventDefault();
     instance.estadoDaTela.set('showForm', false);
+    limparCampos(instance);
   },
   'click .js-remover'(){
     Meteor.call('removerVotacao', this._id);
@@ -47,16 +44,19 @@ Template.votacao.events({
     if(_id) {
       Meteor.call('atualizarVotacao', _id, prefeitoUm, prefeitoDois);
     } else {
-      Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function(error, response) {
-        if(error) {
-          $('.error').toggleClass('hide');
+      Meteor.call('inserirVotacao', prefeitoUm, prefeitoDois, function(err, response) {
+        if(err) {
+          if (err.error == 'validation-error') {
+            instance.estadoDaTela.set('mensagemErro', err.reason);
+          }
+
         } else {
           instance.estadoDaTela.set('showForm', false);
-          alert('Sucesso!');
+          instance.estadoDaTela.set('mensagemSucesso', 'Inserido com sucesso!');
+          limparCampos(instance);
         }
       });
     }
-    limparCampos();
   },
   'click .votarUm'() {
     const filtro = { _id: this._id };
@@ -72,7 +72,8 @@ Template.votacao.events({
   }
 });
 
-function limparCampos() {
+function limparCampos(instance) {
+  instance.estadoDaTela.set('mensagemErro', null);
   $('.votacao').trigger("reset");
 }
 
@@ -82,5 +83,11 @@ Template.votacao.helpers({
   },
   mostrarForm() {
     return Template.instance().estadoDaTela.get('showForm');
+  },
+  mensagemErro() {
+    return Template.instance().estadoDaTela.get('mensagemErro');
+  },
+  mensagemSucesso() {
+    return Template.instance().estadoDaTela.get('mensagemSucesso');
   }
 });
