@@ -23,6 +23,7 @@ Template.votacao.events({
   },
 
   'click .js-cancelar-show-form'(e, instance){
+    e.preventDefault();
     esconderForm(instance);
     limparCampos(instance);
   },
