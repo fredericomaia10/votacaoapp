@@ -10,9 +10,9 @@
                         <h2>Nova votação</h2>
 
                         <form class="votacao form-inline">
-                            <input type="hidden" id="_id" />
-                            <input type="text" placeholder="Candidato 1" name="prefeitoUm" id="prefeitoUm" /> VS
-                            <input type="text" placeholder="Candidato 2" id="prefeitoDois" />
+                            <input type="hidden" id="_id" value="{{votacao._id}}" />
+                            <input type="text" placeholder="Candidato 1" id="prefeitoUm" value="{{votacao.prefeitoUm.nome}}" /> VS
+                            <input type="text" placeholder="Candidato 2" id="prefeitoDois" value="{{votacao.prefeitoDois.nome}}" />
                             <button type="submit" class="btn btn-primary">Incluir</button>
                             <button class="js-cancelar-show-form btn btn-default">Cancelar</button>
                         </form>
