@@ -22,7 +22,7 @@ Template.votacao.onCreated(function() {
 
 Template.votacao.events({
   'click .js-show-form'(event, instance){
-    instance.estadoDaTela.set('showForm', true);
+    mostrarForm(instance);
   },
   'click .js-cancelar-show-form'(event, instance){
     event.preventDefault();
@@ -46,6 +46,7 @@ Template.votacao.events({
     const _id = $('#_id').val();
 
     if(_id) {
+
       //PUT
       const votacao = instance.estadoDaTela.get('votacao');
 
@@ -65,9 +66,9 @@ Template.votacao.events({
         if(error) {
           instance.estadoDaTela.set('mensagemErro', error.reason);
         } else {
-          instance.estadoDaTela.set('showForm', false);
           instance.estadoDaTela.set('mensagemErro', null);
           instance.estadoDaTela.set('mensagemSucesso', 'Criado com sucesso!');
+          esconderForm(instance);
           limparCampos();
           buscarVotacoes(instance);
         }
@@ -111,6 +112,11 @@ Template.votacao.helpers({
   }
 });
 
+/**
+ * Buscar os dados através do method e seta na instância da tela.
+ * Assim que tem o retorno, atualiza a tabela.
+ * @param instance
+ */
 function buscarVotacoes(instance) {
 
   Meteor.call('buscarVotacaoRest', (error, response) => {

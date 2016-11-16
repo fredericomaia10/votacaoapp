@@ -3,18 +3,19 @@ import {Votacao} from './votacao.js';
 import {check} from 'meteor/check';
 import { HTTP } from 'meteor/http';
 
-const restCall = function(URL, callback) {
-
-  try {
-    const result = HTTP.get(URL);
-    callback(null, result.data.data);
-  } catch(e) {
-    console.log(e);
-    callback(500, 'Erro ao acessar API');
-  }
-};
+/**
+ * Link de referência da doc do Meteor de HTTP.
+ * http://docs.meteor.com/api/http.html#HTTP-post
+ *
+ * Link de referência com tutorial do Meteor HTTP
+ * https://themeteorchef.com/snippets/using-the-http-package/
+ */
 
 Meteor.methods({
+  /**
+   * Usa o restCall pra realizar o Get. Foi colocado o Meteor.isServer pois não é possível
+   * realizar chamada HTTP no cliente. Como este arquivo é importado no cliente, mostrava um erro.
+   */
   buscarVotacaoRest() {
     if(Meteor.isServer) {
       this.unblock();
@@ -88,3 +89,19 @@ Meteor.methods({
     }
   }
 });
+
+/**
+ * Função criada pra encapsular o GET. Sempre que fizer um GET via REST é só chamá-lo.
+ * @param URL
+ * @param callback
+ */
+const restCall = function(URL, callback) {
+
+  try {
+    const result = HTTP.get(URL);
+    callback(null, result.data.data);
+  } catch(e) {
+    console.log(e);
+    callback(500, 'Erro ao acessar API');
+  }
+};
