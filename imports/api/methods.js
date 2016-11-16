@@ -25,67 +25,71 @@ Meteor.methods({
   },
 
   atualizarVotacaoRest(votacao) {
-
+    if(Meteor.isServer) {
       try {
         const URL = `http://localhost:3000/api/votacao/${votacao._id}`;
 
-        HTTP.put(URL, { data: votacao }, function(error, response) {
-          if(error) {
+        HTTP.put(URL, {data: votacao}, function (error, response) {
+          if (error) {
             console.log(error);
           } else {
             console.log(response);
           }
         });
 
-      } catch(e) {
+      } catch (e) {
         console.log(e);
       }
+    }
   },
 
   inserirVotacaoRest(prefeitoUm, prefeitoDois) {
+    if(Meteor.isServer) {
+      try {
+        const URL = `http://localhost:3000/api/votacao/`;
 
-    try {
-      const URL = `http://localhost:3000/api/votacao/`;
+        const votacao = {
+          prefeitoUm: {
+            nome: prefeitoUm,
+            qtdVotos: 0
+          },
+          prefeitoDois: {
+            nome: prefeitoDois,
+            qtdVotos: 0
+          },
+          userId: Meteor.userId()
+        };
 
-      const votacao = {
-        prefeitoUm: {
-          nome: prefeitoUm,
-          qtdVotos: 0
-        },
-        prefeitoDois: {
-          nome: prefeitoDois,
-          qtdVotos: 0
-        },
-        userId: Meteor.userId()
-      };
+        HTTP.post(URL, {data: votacao}, function (error, response) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(response);
+          }
+        });
 
-      HTTP.post(URL, { data: votacao }, function(error, response) {
-        if(error) {
-          console.log(error);
-        } else {
-          console.log(response);
-        }
-      });
-
-    } catch(e) {
-      console.log(e);
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
 
   removerVotacao(_id) {
-    try {
-      const URL = `http://localhost:3000/api/votacao/${_id}`;
+    if(Meteor.isServer) {
+      try {
+        const URL = `http://localhost:3000/api/votacao/${_id}`;
 
-      HTTP.del(URL, function(error, response) {
-        if(error) {
-          console.log(error);
-        } else {
-          console.log(response);
-        }
-      });
+        HTTP.del(URL, function (error, response) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(response);
+          }
+        });
 
-    } catch(e) {
-      console.log(e);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 });
