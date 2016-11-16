@@ -72,6 +72,19 @@ Meteor.methods({
   },
 
   removerVotacao(_id) {
-    Votacao.remove( { _id: _id });
+    try {
+      const URL = `http://localhost:3000/api/votacao/${_id}`;
+
+      HTTP.del(URL, function(error, response) {
+        if(error) {
+          console.log(error);
+        } else {
+          console.log(response);
+        }
+      });
+
+    } catch(e) {
+      console.log(e);
+    }
   }
 });

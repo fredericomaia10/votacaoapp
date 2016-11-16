@@ -29,8 +29,10 @@ Template.votacao.events({
     esconderForm(instance);
     instance.estadoDaTela.set('mensagemErro', null);
   },
-  'click .js-remover'(){
-    Meteor.call('removerVotacao', this._id);
+  'click .js-remover'(event, instance){
+    Meteor.call('removerVotacao', this._id, () => {
+      buscarVotacoes(instance);
+    });
   },
   'click .js-editar'(event, instance) {
     const votacao = this;
@@ -57,8 +59,9 @@ Template.votacao.events({
       });
 
     } else {
+
       //POST
-      Meteor.call('inserirVotacaoRest', $('#prefeitoUm').val(), $('#prefeitoDois').val(), function(error, response) {
+      Meteor.call('inserirVotacaoRest', $('#prefeitoUm').val(), $('#prefeitoDois').val(), function(error) {
         if(error) {
           instance.estadoDaTela.set('mensagemErro', error.reason);
         } else {
